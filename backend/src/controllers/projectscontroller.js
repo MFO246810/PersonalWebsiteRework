@@ -1,4 +1,4 @@
-import projects from "../models/ProjectsModel";
+import projects from "../models/ProjectsModel.js";
 
 export const CreateNewProject = async (req, res) => {
     try{
@@ -33,8 +33,8 @@ export const deleteProject = async (req, res) => {
 
 export const getProjects = async (req, res) => {
     try{
-        const projects = await projects.find();
-        res.json(projects);
+        const Projects = await projects.find();
+        res.json(Projects);
     } catch(e){
         console.log(e);
         res.status(500).json({})
