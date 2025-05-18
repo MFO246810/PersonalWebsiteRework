@@ -7,8 +7,7 @@ console.log(process.env.Database_Uri);
 mongoose.connect(process.env.Database_Uri);
 
 const ProjectSchema = new Schema({
-    id: {int, unique: true, required: true},
-    title: string,
+    title: {string, unique: true, required: true},
     description: string,
     github: string,
     techstack: [string],
