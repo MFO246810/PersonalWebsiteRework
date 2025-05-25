@@ -2,7 +2,26 @@ import projects from "../models/ProjectsModel.js";
 
 export const CreateNewProject = async (req, res) => {
     try{
-        const NewProject = new projects(req.body);
+        const data = req.body;
+        const start = new Date(data.starttime);
+        const updated = new Date(data.Last_updated_time);
+
+        if (isNaN(start.getTime()) || isNaN(updated.getTime())) {
+            return res.status(400).json({ error: 'Invalid date format' });
+        }
+
+        if (start > updated) {
+            return res.status(400).json({ error: 'Start time cannot be later than last updated time' });
+        }
+
+        const NewProject = new projects({
+            title: data.title,
+            description: data.description,
+            github: data.github,
+            techstack: data.techstack,
+            starttime: data.starttime,
+            Last_updated_time: data.Last_updated_time
+        });
         await NewProject.save();
         res.status(200).json({"Message": "Project Added Sucessfully"});
     } catch(e){

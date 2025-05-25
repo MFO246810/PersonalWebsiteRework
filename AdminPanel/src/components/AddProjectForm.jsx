@@ -37,33 +37,64 @@ function AddProjectForm(){
         setTechStack(updatedStack);
     };
 
-    const sendDb = () => {
+    const CheckFormdata = () => {
+        if(formdata.title == ""){
+            SetSucessMessage("Please Enter a title for the Project");
+            return false;
+        } else if(formdata.description == ""){
+            SetSucessMessage("Please Enter a description for the Project");
+            return false;
+        } else if(formdata.github == ""){
+            SetSucessMessage("Please Enter a Github Uri for the Project");
+            return false;
+        } else if(formdata.starttime == ""){
+            SetSucessMessage("Please Enter a Start Date for the Project");
+            return false;
+        } else if(formdata.Last_updated_time == ""){
+            SetSucessMessage("Please Enter a Last Updated Date for the Project");
+            return false;
+        } else if(techStack.length === 0 || techStack.some(tech => tech.trim() === '')){
+            SetSucessMessage("Please Enter at least one Technology used in the Project");
+            return false;
+        } 
+        return true;
+    }
+
+    const sendDb = async () => {
+        if(!CheckFormdata()){
+            console.log("Formdata is not valid");
+            return;
+        }
         const FinalSub = {};
         FinalSub.title = formdata.title;
         FinalSub.description = formdata.description;
         FinalSub.github = formdata.github;
         FinalSub.starttime = formdata.starttime;
         FinalSub.Last_updated_time = formdata.Last_updated_time;
-        FinalSub.techStack = techStack;
+        FinalSub.techstack = [...techStack];
         console.log("Final Sub: ",FinalSub)
-        const res = fetch('http://localhost:3000/project', {
+        const res = await fetch('http://localhost:3000/project', {
             method: 'Post',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(FinalSub),
         });
 
-        if(res.ok){
+        if(!res.ok){
+            console.log("An Error has occured")
+        } else {
             console.log("Form Sent Sucessfully");
             setformdata({
-                title : '',
-                description: '',
-                github: '',
-                starttime: '',
-                Last_updated_time: ''
-            });
-        } else {
-            console.log("An Error has occured")
+            title : '',
+            description: '',
+            github: '',
+            starttime: '',
+            Last_updated_time: ''
+        });
+            setTechStack(['']);
+            SetSucessMessage("Project Added Sucessfully");
         }
+
+        
 
     };
 
