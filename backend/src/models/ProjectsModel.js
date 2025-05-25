@@ -10,7 +10,7 @@ const ProjectSchema = new Schema({
     description: {type: String}, 
     github: {type: String , unique: true, required: true},
     techstack: [String],
-    starttime: {type: Date, unique: true, required: true},
+    starttime: {type: Date, required: true},
     Last_updated_time: {type: Date} 
 });
 

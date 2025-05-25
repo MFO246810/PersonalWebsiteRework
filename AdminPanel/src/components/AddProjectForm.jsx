@@ -21,7 +21,7 @@ function AddProjectForm(){
           [name]: value,
         }));
     };
-
+    
     const handleTechChanges = (index, value) => {
         const updatedStack = [...techStack];
         updatedStack[index] = value;
@@ -37,10 +37,39 @@ function AddProjectForm(){
         setTechStack(updatedStack);
     };
 
+    const sendDb = () => {
+        const FinalSub = {};
+        FinalSub.title = formdata.title;
+        FinalSub.description = formdata.description;
+        FinalSub.github = formdata.github;
+        FinalSub.starttime = formdata.starttime;
+        FinalSub.Last_updated_time = formdata.Last_updated_time;
+        FinalSub.techStack = techStack;
+        console.log("Final Sub: ",FinalSub)
+        const res = fetch('http://localhost:3000/project', {
+            method: 'Post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(FinalSub),
+        });
+
+        if(res.ok){
+            console.log("Form Sent Sucessfully");
+            setformdata({
+                title : '',
+                description: '',
+                github: '',
+                starttime: '',
+                Last_updated_time: ''
+            });
+        } else {
+            console.log("An Error has occured")
+        }
+
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Tech Stack:', techStack.filter(Boolean)); // Filter out empty fields
-        // Send techStack to backend here
+        sendDb();
     };
 
     return(<>
@@ -58,11 +87,11 @@ function AddProjectForm(){
                         </div>
 
                     <div className="sm:col-span-6">
-                        <label htmlFor="desciption" className="block text-sm/6 font-medium text-gray-900">Description</label>
+                        <label htmlFor="description" className="block text-sm/6 font-medium text-gray-900">Description</label>
                             <div className="mt-2">
                                 <textarea
-                                id="desciption"
-                                name="desciption"
+                                id="description"
+                                name="description"
                                 value={formdata.description}
                                 onChange={handleFormChange}
                                 rows={3}
@@ -72,25 +101,25 @@ function AddProjectForm(){
 
                     <div className="sm:col-span-6">
 
-                        <label htmlFor="Githuburi" className="block text-sm/6 font-medium text-gray-900">Github Uri: </label>
+                        <label htmlFor="github" className="block text-sm/6 font-medium text-gray-900">Github Uri: </label>
                             <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                                <input type="text" name="Githuburi" id="Githuburi" value={formdata.github} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="Github Url..."/>
+                                <input type="text" name="github" id="github" value={formdata.github} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="Github Url..."/>
                             </div>
                     </div>
 
                     <div className="sm:col-span-6">
 
-                        <label htmlFor="StartDate" className="block text-sm/6 font-medium text-gray-900">Start Date: </label>
+                        <label htmlFor="starttime" className="block text-sm/6 font-medium text-gray-900">Start Date: </label>
                             <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                                <input type="date" name="StartDate" id="StartDate" value={formdata.starttime} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"/>
+                                <input type="date" name="starttime" id="starttime" value={formdata.starttime} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"/>
                             </div>
                     </div>
 
                     <div className="sm:col-span-6">
 
-                        <label htmlFor="Update_date" className="block text-sm/6 font-medium text-gray-900">Last Update Date: </label>
+                        <label htmlFor="Last_updated_time" className="block text-sm/6 font-medium text-gray-900">Last Update Date: </label>
                             <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                                <input type="date" name="Update_date" id="Update_date" value={formdata.Last_updated_time} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"/>
+                                <input type="date" name="Last_updated_time" id="Last_updated_time" value={formdata.Last_updated_time} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"/>
                             </div>
                     </div>
 

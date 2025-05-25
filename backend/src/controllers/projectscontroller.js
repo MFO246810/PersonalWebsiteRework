@@ -4,7 +4,7 @@ export const CreateNewProject = async (req, res) => {
     try{
         const NewProject = new projects(req.body);
         await NewProject.save();
-        res.status(201).json({"Message": "Project Added Sucessfully"});
+        res.status(200).json({"Message": "Project Added Sucessfully"});
     } catch(e){
         console.log(e);
         res.status(500).json({"Error": "DB Saving Failed check the api for error"});
@@ -14,7 +14,7 @@ export const CreateNewProject = async (req, res) => {
 export const UpdateProject = async (req, res) => {
     try{
         await projects.findOneAndUpdate({title: req.params.title}, req.body, {new: true});
-        res.status(201).json({"Message": "Project updated Sucessfully"});
+        res.status(200).json({"Message": "Project updated Sucessfully"});
     } catch(e){
         console.log(e);
         res.status(500).json({"Error": "DB Updating Failed check the api for error"});
