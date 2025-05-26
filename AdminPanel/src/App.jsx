@@ -1,22 +1,20 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router';
 import Navbar from './components/Navbar';
-import Home from './pages/Home'
-import project from './pages/Project&Experience'
+import Home from './pages/Home';
+import Project from './pages/Project&Experience'
+import './App.css';
 
-import './App.css'
-;
 function App() {
   return (
     <>
       <BrowserRouter>
-        <Navbar/>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/Project&Experience" element={<project />} />
-            <Route path="/servers" element={<servers />} />
-            <Route path="/websites" element={<websites />} />
-            <Route path="/Bots" element={<bots />} />
-          </Routes>
+      <Navbar/> 
+      <main className="mt-19 px-4">
+        <Routes>
+          <Route path="/" element={<Home/>}/>
+          <Route path="/project" element={<Project/>}/>
+        </Routes>
+      </main>
         </BrowserRouter>
       
       
