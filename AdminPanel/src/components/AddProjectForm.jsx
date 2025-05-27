@@ -6,8 +6,8 @@ function AddProjectForm(){
         title : '',
         description: '',
         github: '',
-        starttime: '',
-        Last_updated_time: '',
+        starttime: Date(''),
+        Last_updated_time: Date(''),
     }); 
 
     const [techStack, setTechStack] = useState(['']);
