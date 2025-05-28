@@ -9,7 +9,7 @@ function App() {
     <>
       <BrowserRouter>
       <Navbar/> 
-      <main className="mt-19 px-4">
+      <main className="mt-17 px-4">
         <Routes>
           <Route path="/" element={<Home/>}/>
           <Route path="/project" element={<Project/>}/>

@@ -1,19 +1,29 @@
-import { useState } from 'react';
-import React from 'react'; 
+import React, { useEffect, useState } from 'react'; 
+import { useNavigate } from "react-router-dom";
 
-function AddProjectForm(){
+function UpdateProject(){
+    const [Projects, setProjects] = useState([]);
+
     const [formdata, setformdata] = useState({
         title : '',
         description: '',
         github: '',
         starttime: Date(),
         Last_updated_time: Date(),
-    }); 
-
-    const [techStack, setTechStack] = useState(['']);
-
+    });
+ 
+    const [techStack, setTechStack] = useState([]);
+    const [selectedProject, setSelectedProject] = useState('');
     const [SucessMessage, SetSucessMessage] = useState('');
+    const navigate = useNavigate();
 
+    useEffect(() => {
+        fetch('http://localhost:3000/project')
+          .then(res => res.json())
+          .then(data => setProjects(data))
+          .catch(err => console.error("Error fetching projects:", err));
+    }, []);
+    
     const handleFormChange = (e) => {
         const { name, value } = e.target;
         setformdata(prev => ({
@@ -21,46 +31,79 @@ function AddProjectForm(){
           [name]: value,
         }));
     };
-    
+
     const handleTechChanges = (index, value) => {
         const updatedStack = [...techStack];
         updatedStack[index] = value;
         setTechStack(updatedStack);
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log(selectedProject);
+        for(let i = 0; i < Projects.length; i++){
+            if(Projects[i].title == selectedProject){
+                formdata.title = Projects[i].title;
+                formdata.description = Projects[i].title;
+                formdata.github = Projects[i].github;
+                formdata.starttime = new Date(Projects[i].starttime).toISOString().split("T")[0];
+                formdata.Last_updated_time = new Date(Projects[i].Last_updated_time).toISOString().split("T")[0];
+                const updatedStack = [];
+                if (Array.isArray(Projects[i].techstack)) {
+                    for(let j = 0; j < Projects[i].techstack.length; j++){
+                        updatedStack.push(Projects[i].techstack[j])
+                    }
+                    setTechStack(updatedStack);
+                }
+            }
+        }
+    }
+
     const addTechInput = () => {
         setTechStack([...techStack, '']);
     };
-
+    
     const removeTechInput = (index) => {
         const updatedStack = techStack.filter((_, i) => i !== index);
         setTechStack(updatedStack);
     };
-
+    
     const CheckFormdata = () => {
         if(formdata.title == ""){
+            FailureBar.style.display = "block";
+            sucessBar.style.display = "none";
             SetSucessMessage("Please Enter a title for the Project");
             return false;
         } else if(formdata.description == ""){
+            FailureBar.style.display = "block";
+            sucessBar.style.display = "none";
             SetSucessMessage("Please Enter a description for the Project");
             return false;
         } else if(formdata.github == ""){
+            FailureBar.style.display = "block";
+            sucessBar.style.display = "none";
             SetSucessMessage("Please Enter a Github Uri for the Project");
             return false;
         } else if(formdata.starttime == ""){
+            FailureBar.style.display = "block";
+            sucessBar.style.display = "none";
             SetSucessMessage("Please Enter a Start Date for the Project");
             return false;
         } else if(formdata.Last_updated_time == ""){
+            FailureBar.style.display = "block";
+            sucessBar.style.display = "none";
             SetSucessMessage("Please Enter a Last Updated Date for the Project");
             return false;
         } else if(techStack.length === 0 || techStack.some(tech => tech.trim() === '')){
+            FailureBar.style.display = "block";
+            sucessBar.style.display = "none";
             SetSucessMessage("Please Enter at least one Technology used in the Project");
             return false;
         } 
         return true;
     }
 
-    const sendDb = async () => {
+    const UpdateDb = async() => {
         if(!CheckFormdata()){
             console.log("Formdata is not valid");
             return;
@@ -72,8 +115,9 @@ function AddProjectForm(){
         FinalSub.starttime = new Date(formdata.starttime).toISOString().split("T")[0];
         FinalSub.Last_updated_time = new Date(formdata.Last_updated_time).toISOString().split("T")[0];
         FinalSub.techstack = [...techStack];
-        console.log("Final Sub: ",FinalSub)
-        const res = await fetch('http://localhost:3000/project', {
+        console.log("Final Sub: ",FinalSub);
+
+        const res = await fetch(`http://localhost:3000/project/update/${selectedProject}`, {
             method: 'Post',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(FinalSub),
@@ -91,25 +135,48 @@ function AddProjectForm(){
             Last_updated_time: ''
         });
             setTechStack(['']);
-            SetSucessMessage("Project Added Sucessfully");
+            SetSucessMessage(`${FinalSub.title} updated sucessfully`);
+            FailureBar.style.display = "none"; 
+            sucessBar.style.display = "block";
         }
 
-        
-
-    };
-
-    const handleSubmit = (e) => {
+    }
+    const handleUpdates = (e) => {
         e.preventDefault();
-        sendDb();
-    };
+        UpdateDb();
+        navigate(0); 
+    }
 
     return(<>
-        <form onSubmit={handleSubmit}>
-            <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-                
-                <div className="w-full max-w-lg mx-auto border-b border-gray-900/10 pb-8">
-                    <h1 className="text-center text-base/7 font-semibold text-gray-1200">Add New Project</h1>
-                    <div className="mt-3 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-6">
+        <div className="max-w-md mx-auto mt-10 mb-10">
+            <form onSubmit={handleSubmit}>
+                <label htmlFor="SelectProject" className="block mb-2 text-sm font-medium text-gray-700">
+                    Select a Project:
+                </label>
+                <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                    <select
+                        id="SelectProject"
+                        value={selectedProject}
+                        onChange= {(e) => setSelectedProject(e.target.value)}
+                        className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                    >
+                    <option value="" disabled>Select a project</option>
+                    {Projects.map((project, index) => (
+                    <option key={index} value={project.title}>
+                        {project.title}
+                    </option>
+                    ))}
+                    </select> 
+                </div>
+                <div className="mt-4">
+                        <button type="submit" className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800"> Pull Project </button>
+                </div>
+            </form>
+      </div>
+
+      <div className="block max-w-md" id="UpdateSubmit">
+            <form onSubmit={handleUpdates}>
+                <div className="mt-3 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-6">
                         <div className="sm:col-span-6">
 
                             <label htmlFor="title" className="block text-sm/6 font-medium text-gray-900">Project Title</label>
@@ -180,19 +247,16 @@ function AddProjectForm(){
                         <button
                             type="button"
                             onClick={addTechInput}
-                            className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Add Tech</button>
+                            className="bg-blue-700 text-white px-4 py-1 rounded hover:bg-blue-800">Add Tech</button>
                     </div>
                     <div className="mt-4">
-                        <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"> Submit </button>
+                        <button type="submit" className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800"> Submit </button>
                     </div>
                 </div>
-            </div>
-        </div>
-    </form>
+            </form>
+      </div>
+
     </>);
-
-
-    
 }
 
-export default AddProjectForm;
+export default UpdateProject
