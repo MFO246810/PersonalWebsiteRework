@@ -5,7 +5,7 @@ const ProjectRoute = Router();
 
 ProjectRoute.post('/', CreateNewProject);
 ProjectRoute.get('/', getProjects);
-ProjectRoute.post('/:title', UpdateProject);
-ProjectRoute.post('/:title', deleteProject);
+ProjectRoute.post('/update/:title', UpdateProject);
+ProjectRoute.post('/delete/:title', deleteProject);
 
 export default ProjectRoute;

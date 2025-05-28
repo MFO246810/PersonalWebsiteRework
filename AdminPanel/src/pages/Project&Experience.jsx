@@ -1,5 +1,6 @@
 import AddProjectForm from '../components/AddProjectForm'
 import UpdateProject from '../components/UpdateProjectForm';
+import DeleteProject from '../components/Delete ProjectsForm';
 import React from 'react'
 
 export default function project(){
@@ -7,6 +8,7 @@ export default function project(){
         <p> This is Project I exist</p>
         <AddProjectForm/>
         <UpdateProject/>
+        <DeleteProject/>
     </>
     );
 }

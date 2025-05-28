@@ -1,3 +1,4 @@
+import { title } from "process";
 import projects from "../models/ProjectsModel.js";
 
 export const CreateNewProject = async (req, res) => {
@@ -32,7 +33,8 @@ export const CreateNewProject = async (req, res) => {
 
 export const UpdateProject = async (req, res) => {
     try{
-        await projects.findOneAndUpdate({title: req.params.title}, req.body, {new: true});
+        console.log(req.params['title']);
+        await projects.findOneAndUpdate({title: req.params['title']}, req.body, {new: true});
         res.status(200).json({"Message": "Project updated Sucessfully"});
     } catch(e){
         console.log(e);

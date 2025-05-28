@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'; 
+import { useNavigate } from "react-router-dom";
 
 function UpdateProject(){
     const [Projects, setProjects] = useState([]);
@@ -7,12 +8,14 @@ function UpdateProject(){
         title : '',
         description: '',
         github: '',
-        starttime: Date(''),
-        Last_updated_time: Date(''),
+        starttime: Date(),
+        Last_updated_time: Date(),
     });
  
-    const [techStack, setTechStack] = useState(['']);
+    const [techStack, setTechStack] = useState([]);
     const [selectedProject, setSelectedProject] = useState('');
+    const [SucessMessage, SetSucessMessage] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('http://localhost:3000/project')
@@ -43,14 +46,17 @@ function UpdateProject(){
                 formdata.title = Projects[i].title;
                 formdata.description = Projects[i].title;
                 formdata.github = Projects[i].github;
-                formdata.starttime = Projects[i].starttime;
-                formdata.Last_updated_time = Projects[i].Last_updated_time;
-
-                formdata.starttime = formdata.starttime.toISOString().split("T")[0]
-                formdata.Last_updated_time = formdata.Last_updated_time.toISOString().split("T")[0]
+                formdata.starttime = new Date(Projects[i].starttime).toISOString().split("T")[0];
+                formdata.Last_updated_time = new Date(Projects[i].Last_updated_time).toISOString().split("T")[0];
+                const updatedStack = [];
+                if (Array.isArray(Projects[i].techstack)) {
+                    for(let j = 0; j < Projects[i].techstack.length; j++){
+                        updatedStack.push(Projects[i].techstack[j])
+                    }
+                    setTechStack(updatedStack);
+                }
             }
         }
-        setSelectedProject('');
     }
 
     const addTechInput = () => {
@@ -61,9 +67,71 @@ function UpdateProject(){
         const updatedStack = techStack.filter((_, i) => i !== index);
         setTechStack(updatedStack);
     };
+    
+    const CheckFormdata = () => {
+        if(formdata.title == ""){
+            SetSucessMessage("Please Enter a title for the Project");
+            return false;
+        } else if(formdata.description == ""){
+            SetSucessMessage("Please Enter a description for the Project");
+            return false;
+        } else if(formdata.github == ""){
+            SetSucessMessage("Please Enter a Github Uri for the Project");
+            return false;
+        } else if(formdata.starttime == ""){
+            SetSucessMessage("Please Enter a Start Date for the Project");
+            return false;
+        } else if(formdata.Last_updated_time == ""){
+            SetSucessMessage("Please Enter a Last Updated Date for the Project");
+            return false;
+        } else if(techStack.length === 0 || techStack.some(tech => tech.trim() === '')){
+            SetSucessMessage("Please Enter at least one Technology used in the Project");
+            return false;
+        } 
+        return true;
+    }
 
+    const UpdateDb = async() => {
+        if(!CheckFormdata()){
+            console.log("Formdata is not valid");
+            return;
+        }
+        const FinalSub = {};
+        FinalSub.title = formdata.title;
+        FinalSub.description = formdata.description;
+        FinalSub.github = formdata.github;
+        FinalSub.starttime = new Date(formdata.starttime).toISOString().split("T")[0];
+        FinalSub.Last_updated_time = new Date(formdata.Last_updated_time).toISOString().split("T")[0];
+        FinalSub.techstack = [...techStack];
+        console.log("Final Sub: ",FinalSub);
+
+        const res = await fetch(`http://localhost:3000/project/update/${selectedProject}`, {
+            method: 'Post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(FinalSub),
+        });
+
+        if(!res.ok){
+            console.log("An Error has occured")
+        } else {
+            console.log("Form Sent Sucessfully");
+            setformdata({
+            title : '',
+            description: '',
+            github: '',
+            starttime: '',
+            Last_updated_time: ''
+        });
+            setTechStack(['']);
+            SetSucessMessage("Project Added Sucessfully");
+
+        }
+
+    }
     const handleUpdates = (e) => {
-        console.log(formdata);
+        e.preventDefault();
+        UpdateDb();
+        navigate(0); 
     }
 
     return(<>

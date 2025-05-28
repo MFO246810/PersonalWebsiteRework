@@ -6,8 +6,8 @@ function AddProjectForm(){
         title : '',
         description: '',
         github: '',
-        starttime: Date(''),
-        Last_updated_time: Date(''),
+        starttime: Date(),
+        Last_updated_time: Date(),
     }); 
 
     const [techStack, setTechStack] = useState(['']);
@@ -69,8 +69,8 @@ function AddProjectForm(){
         FinalSub.title = formdata.title;
         FinalSub.description = formdata.description;
         FinalSub.github = formdata.github;
-        FinalSub.starttime = formdata.starttime;
-        FinalSub.Last_updated_time = formdata.Last_updated_time;
+        FinalSub.starttime = new Date(formdata.starttime).toISOString().split("T")[0];
+        FinalSub.Last_updated_time = new Date(formdata.Last_updated_time).toISOString().split("T")[0];
         FinalSub.techstack = [...techStack];
         console.log("Final Sub: ",FinalSub)
         const res = await fetch('http://localhost:3000/project', {
@@ -106,6 +106,7 @@ function AddProjectForm(){
     return(<>
         <form onSubmit={handleSubmit}>
             <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+                
                 <div className="w-full max-w-lg mx-auto border-b border-gray-900/10 pb-8">
                     <h1 className="text-center text-base/7 font-semibold text-gray-1200">Add New Project</h1>
                     <div className="mt-3 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-6">
