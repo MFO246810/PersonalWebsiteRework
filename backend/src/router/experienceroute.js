@@ -5,7 +5,7 @@ const ExperienceRoute = Router();
 
 ExperienceRoute.post('/', CreateNewExperience);
 ExperienceRoute.get('/', getExperiences);
-ExperienceRoute.post('/:title', UpdateExperience);
-ExperienceRoute.post('/:title', deleteExperience);
+ExperienceRoute.post('/update/:title', UpdateExperience);
+ExperienceRoute.post('/delete/:title', deleteExperience);
 
 export default ExperienceRoute;

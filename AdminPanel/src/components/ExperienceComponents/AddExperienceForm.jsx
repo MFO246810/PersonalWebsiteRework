@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import React from 'react'; 
 
-function AddProjectForm(){
+function AddExperienceForm(){
     const [formdata, setformdata] = useState({
         title : '',
+        position : '',
+        location : '',
+        company : '',
         description: '',
-        github: '',
-        starttime: Date(),
-        Last_updated_time: Date(),
+        startTime: Date(),
+        EndTime: Date(),
     }); 
-
-    const [techStack, setTechStack] = useState(['']);
 
     const [SucessMessage, SetSucessMessage] = useState('');
 
@@ -24,52 +24,42 @@ function AddProjectForm(){
           [name]: value,
         }));
     };
-    
-    const handleTechChanges = (index, value) => {
-        const updatedStack = [...techStack];
-        updatedStack[index] = value;
-        setTechStack(updatedStack);
-    };
-
-    const addTechInput = () => {
-        setTechStack([...techStack, '']);
-    };
-
-    const removeTechInput = (index) => {
-        const updatedStack = techStack.filter((_, i) => i !== index);
-        setTechStack(updatedStack);
-    };
 
     const CheckFormdata = () => {
         if(formdata.title == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a title for the Project");
+            SetSucessMessage("Please Enter a title for this Experience");
             return false;
         } else if(formdata.description == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a description for the Project");
+            SetSucessMessage("Please Enter a description for this Experience");
             return false;
-        } else if(formdata.github == ""){
+        }else if(formdata.position == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Github Uri for the Project");
+            SetSucessMessage("Please Enter a Position for this Experience");
             return false;
-        } else if(formdata.starttime == ""){
+        } else if(formdata.location == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Start Date for the Project");
+            SetSucessMessage("Please Enter a location for this Experience");
             return false;
-        } else if(formdata.Last_updated_time == ""){
+        } else if(formdata.company == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Last Updated Date for the Project");
+            SetSucessMessage("Please Enter a company for this Experience");
             return false;
-        } else if(techStack.length === 0 || techStack.some(tech => tech.trim() === '')){
+        } else if(formdata.startTime == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter at least one Technology used in the Project");
+            SetSucessMessage("Please Enter a Start Date for this Experience");
+            return false;
+        } else if(formdata.EndTime == ""){
+            FailureBar.style.display = "block";
+            sucessBar.style.display = "none";
+            SetSucessMessage("Please Enter a Last Updated Date for this Experience");
             return false;
         } 
         return true;
@@ -82,12 +72,13 @@ function AddProjectForm(){
         const FinalSub = {};
         FinalSub.title = formdata.title;
         FinalSub.description = formdata.description;
-        FinalSub.github = formdata.github;
-        FinalSub.starttime = new Date(formdata.starttime).toISOString().split("T")[0];
-        FinalSub.Last_updated_time = new Date(formdata.Last_updated_time).toISOString().split("T")[0];
-        FinalSub.techstack = [...techStack];
+        FinalSub.position = formdata.position;
+        FinalSub.location = formdata.location;
+        FinalSub.company = formdata.company;
+        FinalSub.startTime = new Date(formdata.startTime).toISOString().split("T")[0];
+        FinalSub.EndTime = new Date(formdata.EndTime).toISOString().split("T")[0];
         console.log("Final Sub: ",FinalSub)
-        const res = await fetch('http://localhost:3000/project', {
+        const res = await fetch('http://localhost:3000/experience', {
             method: 'Post',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(FinalSub),
@@ -99,12 +90,13 @@ function AddProjectForm(){
             console.log("Form Sent Sucessfully");
             setformdata({
             title : '',
+            position : '',
+            location : '',
+            company : '',
             description: '',
-            github: '',
-            starttime: '',
-            Last_updated_time: ''
+            startTime: Date(),
+            EndTime: Date(),
         });
-            setTechStack(['']);
             SetSucessMessage(`${FinalSub.title} Added Sucessfully`);
             FailureBar.style.display = "none";
             sucessBar.style.display = "block";
@@ -143,14 +135,38 @@ function AddProjectForm(){
                         </div>
                     </div>
                 </div>
-                    <h1 className="text-center text-base/7 font-semibold text-gray-1200">Add New Project</h1>
+                    <h1 className="text-center text-base/7 font-semibold text-gray-1200">Add New Experience</h1>
                     <div className="mt-3 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-6">
                         <div className="sm:col-span-6">
 
-                            <label htmlFor="title" className="block text-sm/6 font-medium text-gray-900">Project Title</label>
+                            <label htmlFor="title" className="block text-sm/6 font-medium text-gray-900">Experience Title</label>
                                 <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
                                     <input type="text" name="title" id="title" value={formdata.title} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="Title..."/>
                                 </div>
+                        </div>
+
+                        <div className="sm:col-span-6">
+
+                        <label htmlFor="position" className="block text-sm/6 font-medium text-gray-900">Position: </label>
+                            <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                                <input type="text" name="position" id="position" value={formdata.position} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder=""/>
+                            </div>
+                        </div>
+
+                        <div className="sm:col-span-6">
+
+                        <label htmlFor="company" className="block text-sm/6 font-medium text-gray-900">Company: </label>
+                            <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                                <input type="text" name="company" id="company" value={formdata.company} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder=""/>
+                            </div>
+                        </div>
+
+                        <div className="sm:col-span-6">
+
+                        <label htmlFor="location" className="block text-sm/6 font-medium text-gray-900">Location: </label>
+                            <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                                <input type="text" name="location" id="location" value={formdata.location} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder=""/>
+                            </div>
                         </div>
 
                     <div className="sm:col-span-6">
@@ -168,54 +184,18 @@ function AddProjectForm(){
 
                     <div className="sm:col-span-6">
 
-                        <label htmlFor="github" className="block text-sm/6 font-medium text-gray-900">Github Uri: </label>
+                        <label htmlFor="startTime" className="block text-sm/6 font-medium text-gray-900">Start Date: </label>
                             <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                                <input type="text" name="github" id="github" value={formdata.github} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="Github Url..."/>
+                                <input type="date" name="startTime" id="startTime" value={formdata.startTime} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"/>
                             </div>
                     </div>
 
                     <div className="sm:col-span-6">
 
-                        <label htmlFor="starttime" className="block text-sm/6 font-medium text-gray-900">Start Date: </label>
+                        <label htmlFor="EndTime" className="block text-sm/6 font-medium text-gray-900">End Date: </label>
                             <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                                <input type="date" name="starttime" id="starttime" value={formdata.starttime} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"/>
+                                <input type="date" name="EndTime" id="EndTime" value={formdata.EndTime} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"/>
                             </div>
-                    </div>
-
-                    <div className="sm:col-span-6">
-
-                        <label htmlFor="Last_updated_time" className="block text-sm/6 font-medium text-gray-900">Last Update Date: </label>
-                            <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                                <input type="date" name="Last_updated_time" id="Last_updated_time" value={formdata.Last_updated_time} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"/>
-                            </div>
-                    </div>
-
-                    <div className="sm:col-span-6">
-                        
-                        {techStack.map((item, index) => (
-                            <div key={index} className="flex items-center gap-2">
-                                <label className="block text-sm/6 font-medium text-gray-900" htmlFor={`techstack${index + 1}`}>Technology used {index + 1}: </label>
-                                <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                                    <input
-                                        type="text"
-                                        name = {`techstack${index + 1}`}
-                                        value={item}
-                                        onChange={(e) => handleTechChanges(index, e.target.value)}
-                                        className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
-                                    /> 
-                                </div>
-                                {techStack.length > 1 && (
-                                    <button
-                                        type="button"
-                                        className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 mt-2"
-                                        onClick={() => removeTechInput(index)}> Remove </button>
-                                    )}
-                            </div>))}
-
-                        <button
-                            type="button"
-                            onClick={addTechInput}
-                            className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Add Tech</button>
                     </div>
                     <div className="mt-4">
                         <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"> Submit </button>
@@ -230,4 +210,4 @@ function AddProjectForm(){
     
 }
 
-export default AddProjectForm;
+export default AddExperienceForm;

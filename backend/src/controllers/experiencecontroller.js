@@ -2,7 +2,27 @@ import experience from "../models/ExperienceModel.js";
 
 export const CreateNewExperience = async (req, res) => {
     try{
-        const NewExperience = new experience(req.body);
+        const data = req.body;
+            const start = new Date(data.startTime);
+            const updated = new Date(data.EndTime);
+        
+            if (isNaN(start.getTime()) || isNaN(updated.getTime())) {
+                return res.status(400).json({ error: 'Invalid date format' });
+            }
+        
+            if (start > updated) {
+                return res.status(400).json({ error: 'Start time cannot be later than last updated time' });
+            }
+        
+            const NewExperience = new experience({
+                title: data.title,
+                position: data.position,
+                location: data.location,
+                company: data.company,
+                description: data.description,
+                startTime: data.startTime,
+                EndTime: data.EndTime
+            });
         await NewExperience.save();
         res.status(201).json({"Message": "Experience Added Sucessfully"});
     } catch(e){

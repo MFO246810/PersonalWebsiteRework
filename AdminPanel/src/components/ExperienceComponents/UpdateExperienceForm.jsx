@@ -1,31 +1,32 @@
 import React, { useEffect, useState } from 'react'; 
 
-function UpdateProject(){
-    const [Projects, setProjects] = useState([]);
+function UpdateExperience(){
+    const [Experience , setExperience] = useState([]);
 
     const [formdata, setformdata] = useState({
         title : '',
+        position : '',
+        location : '',
+        company : '',
         description: '',
-        github: '',
         starttime: Date(),
-        Last_updated_time: Date(),
+        EndTime: Date(),
     });
  
-    const [techStack, setTechStack] = useState([]);
-    const [selectedProject, setSelectedProject] = useState('');
+    const [selectedExperience, setSelectedExperience] = useState('');
     const [SucessMessage, SetSucessMessage] = useState('');
     const sucessBar = document.getElementById("SucessMessageBox");
     const FailureBar = document.getElementById("FailureMessageBox");
 
     useEffect(() => {
-        fetchprojects();
+        fetchExperience();
     }, []);
     
-    const fetchprojects = async() => {
-        await fetch('http://localhost:3000/project')
+    const fetchExperience = async() => {
+        await fetch('http://localhost:3000/Experience')
           .then(res => res.json())
-          .then(data => setProjects(data))
-          .catch(err => console.error("Error fetching projects:", err));
+          .then(data => setExperience(data))
+          .catch(err => console.error("Error fetching Experience:", err));
     }
 
     const handleFormChange = (e) => {
@@ -36,79 +37,64 @@ function UpdateProject(){
         }));
     };
 
-    const handleTechChanges = (index, value) => {
-        const updatedStack = [...techStack];
-        updatedStack[index] = value;
-        setTechStack(updatedStack);
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
         sucessBar.style.display = "none";
         FailureBar.style.display = "none";
-        console.log(selectedProject);
-        for(let i = 0; i < Projects.length; i++){
-            if(Projects[i].title == selectedProject){
-                formdata.title = Projects[i].title;
-                formdata.description = Projects[i].description;
-                formdata.github = Projects[i].github;
-                formdata.starttime = new Date(Projects[i].starttime).toISOString().split("T")[0];
-                formdata.Last_updated_time = new Date(Projects[i].Last_updated_time).toISOString().split("T")[0];
-                const updatedStack = [];
-                if (Array.isArray(Projects[i].techstack)) {
-                    for(let j = 0; j < Projects[i].techstack.length; j++){
-                        updatedStack.push(Projects[i].techstack[j])
-                    }
-                    setTechStack(updatedStack);
-                }
+        console.log(selectedExperience);
+        for(let i = 0; i < Experience.length; i++){
+            if(Experience[i].title == selectedExperience){
+                formdata.title = Experience[i].title;
+                formdata.position = Experience[i].position;
+                formdata.location = Experience[i].location;
+                formdata.company = Experience[i].company;
+                formdata.description = Experience[i].description;
+                formdata.startTime = new Date(Experience[i].starttime);
+                formdata.EndTime = new Date(Experience[i].Last_updated_time);
             }
         }
     }
-
-    const addTechInput = () => {
-        setTechStack([...techStack, '']);
-    };
-    
-    const removeTechInput = (index) => {
-        const updatedStack = techStack.filter((_, i) => i !== index);
-        setTechStack(updatedStack);
-    };
     
     const CheckFormdata = () => {
         if(formdata.title == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a title for the Project");
+            SetSucessMessage("Please Enter a title for this Experience");
             return false;
         } else if(formdata.description == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a description for the Project");
+            SetSucessMessage("Please Enter a description for this Experience");
             return false;
-        } else if(formdata.github == ""){
+        }else if(formdata.position == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Github Uri for the Project");
+            SetSucessMessage("Please Enter a Position for this Experience");
             return false;
-        } else if(formdata.starttime == ""){
+        } else if(formdata.location == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Start Date for the Project");
+            SetSucessMessage("Please Enter a location for this Experience");
             return false;
-        } else if(formdata.Last_updated_time == ""){
+        } else if(formdata.company == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Last Updated Date for the Project");
+            SetSucessMessage("Please Enter a company for this Experience");
             return false;
-        } else if(techStack.length === 0 || techStack.some(tech => tech.trim() === '')){
+        } else if(formdata.startTime == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter at least one Technology used in the Project");
+            SetSucessMessage("Please Enter a Start Date for this Experience");
             return false;
-        } else{
-            return true;
-        }
+        } else if(formdata.EndTime == ""){
+            FailureBar.style.display = "block";
+            sucessBar.style.display = "none";
+            SetSucessMessage("Please Enter a Last Updated Date for this Experience");
+            return false;
+        } 
+        return true;
     }
+
 
     const UpdateDb = async() => {
         if(!CheckFormdata()){
@@ -117,14 +103,16 @@ function UpdateProject(){
         }
         const FinalSub = {};
         FinalSub.title = formdata.title;
+        FinalSub.position = formdata.position;
+        FinalSub.location = formdata.location;
+        FinalSub.company = formdata.company;
         FinalSub.description = formdata.description;
         FinalSub.github = formdata.github;
-        FinalSub.starttime = new Date(formdata.starttime).toISOString().split("T")[0];
-        FinalSub.Last_updated_time = new Date(formdata.Last_updated_time).toISOString().split("T")[0];
-        FinalSub.techstack = [...techStack];
+        FinalSub.startTime = new Date(formdata.starttime);
+        FinalSub.EndTime = new Date(formdata.Last_updated_time);
         console.log("Final Sub: ",FinalSub);
 
-        const res = await fetch(`http://localhost:3000/project/update/${selectedProject}`, {
+        const res = await fetch(`http://localhost:3000/Experience/update/${selectedExperience}`, {
             method: 'Post',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(FinalSub),
@@ -137,15 +125,16 @@ function UpdateProject(){
             console.log("Form Sent Sucessfully");
             setformdata({
             title : '',
+            position : '',
+            location : '',
+            company : '',
             description: '',
-            github: '',
-            starttime: '',
-            Last_updated_time: ''
+            startTime: Date(),
+            EndTime: Date(),
         });
             SetSucessMessage(`${FinalSub.title} updated sucessfully`);
-            setSelectedProject('');
-            setTechStack(['']);
-            fetchprojects();
+            setSelectedExperience('');
+            fetchExperience();
             return true;
         }
 
@@ -164,26 +153,26 @@ function UpdateProject(){
     return(<>
         <div className="max-w-md mx-auto mt-10 mb-10">
             <form onSubmit={handleSubmit}>
-                <label htmlFor="SelectProject" className="block mb-2 text-sm font-medium text-gray-700">
-                    Select a Project:
+                <label htmlFor="SelectExperience" className="block mb-2 text-sm font-medium text-gray-700">
+                    Select a Experience:
                 </label>
                 <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
                     <select
-                        id="SelectProject"
-                        value={selectedProject}
-                        onChange= {(e) => setSelectedProject(e.target.value)}
+                        id="SelectExperience"
+                        value={selectedExperience}
+                        onChange= {(e) => setSelectedExperience(e.target.value)}
                         className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
                     >
-                    <option value="" disabled>Select a project</option>
-                    {Projects.map((project, index) => (
-                    <option key={index} value={project.title}>
-                        {project.title}
+                    <option value="" disabled>Select a Experience</option>
+                    {Experience.map((Experience, index) => (
+                    <option key={index} value={Experience.title}>
+                        {Experience.title}
                     </option>
                     ))}
                     </select> 
                 </div>
                 <div className="mt-4">
-                        <button type="submit" className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800"> Pull Project </button>
+                        <button type="submit" className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800"> Pull Experience </button>
                 </div>
             </form>
       </div>
@@ -213,16 +202,39 @@ function UpdateProject(){
                         </div>
                     </div>
                 </div>
-
-                <h1 className="text-center text-base/7 font-semibold text-gray-1200">Update Project</h1>
+                <h1 className="text-center text-base/7 font-semibold text-gray-1200">Update Experience</h1>
             <form onSubmit={handleUpdates}>
-                <div className="mt-1 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-6">
+                <div className="mt-3 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-6">
                         <div className="sm:col-span-6">
 
-                            <label htmlFor="title" className="block text-sm/6 font-medium text-gray-900">Project Title</label>
+                            <label htmlFor="title" className="block text-sm/6 font-medium text-gray-900">Experience Title</label>
                                 <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
                                     <input type="text" name="title" id="title" value={formdata.title} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="Title..."/>
                                 </div>
+                        </div>
+
+                    <div className="sm:col-span-6">
+
+                        <label htmlFor="position" className="block text-sm/6 font-medium text-gray-900">Position: </label>
+                            <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                                <input type="text" name="position" id="position" value={formdata.position} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder=""/>
+                            </div>
+                        </div>
+
+                        <div className="sm:col-span-6">
+
+                        <label htmlFor="company" className="block text-sm/6 font-medium text-gray-900">Company: </label>
+                            <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                                <input type="text" name="company" id="company" value={formdata.company} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder=""/>
+                            </div>
+                        </div>
+
+                        <div className="sm:col-span-6">
+
+                        <label htmlFor="location" className="block text-sm/6 font-medium text-gray-900">Location: </label>
+                            <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                                <input type="text" name="location" id="location" value={formdata.location} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder=""/>
+                            </div>
                         </div>
 
                     <div className="sm:col-span-6">
@@ -240,64 +252,28 @@ function UpdateProject(){
 
                     <div className="sm:col-span-6">
 
-                        <label htmlFor="github" className="block text-sm/6 font-medium text-gray-900">Github Uri: </label>
+                        <label htmlFor="startTime" className="block text-sm/6 font-medium text-gray-900">Start Date: </label>
                             <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                                <input type="text" name="github" id="github" value={formdata.github} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" placeholder="Github Url..."/>
+                                <input type="date" name="startTime" id="startTime" value={formdata.startTime} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"/>
                             </div>
                     </div>
 
                     <div className="sm:col-span-6">
 
-                        <label htmlFor="starttime" className="block text-sm/6 font-medium text-gray-900">Start Date: </label>
+                        <label htmlFor="EndTime" className="block text-sm/6 font-medium text-gray-900">End Date: </label>
                             <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                                <input type="date" name="starttime" id="starttime" value={formdata.starttime} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"/>
+                                <input type="date" name="EndTime" id="EndTime" value={formdata.EndTime} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"/>
                             </div>
-                    </div>
-
-                    <div className="sm:col-span-6">
-
-                        <label htmlFor="Last_updated_time" className="block text-sm/6 font-medium text-gray-900">Last Update Date: </label>
-                            <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                                <input type="date" name="Last_updated_time" id="Last_updated_time" value={formdata.Last_updated_time} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"/>
-                            </div>
-                    </div>
-
-                    <div className="sm:col-span-6">
-                        
-                        {techStack.map((item, index) => (
-                            <div key={index} className="flex items-center gap-2">
-                                <label className="block text-sm/6 font-medium text-gray-900" htmlFor={`techstack${index + 1}`}>Technology used {index + 1}: </label>
-                                <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                                    <input
-                                        type="text"
-                                        name = {`techstack${index + 1}`}
-                                        value={item}
-                                        onChange={(e) => handleTechChanges(index, e.target.value)}
-                                        className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
-                                    /> 
-                                </div>
-                                {techStack.length > 1 && (
-                                    <button
-                                        type="button"
-                                        className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 mt-2"
-                                        onClick={() => removeTechInput(index)}> Remove </button>
-                                    )}
-                            </div>))}
-
-                        <button
-                            type="button"
-                            onClick={addTechInput}
-                            className="bg-blue-700 text-white px-4 py-1 rounded hover:bg-blue-800">Add Tech</button>
                     </div>
                     <div className="mt-4">
                         <button type="submit" className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800"> Submit </button>
                     </div>
                 </div>
-        </form>
-        </div>
-    </div>
+            </form>
+            </div>
+      </div>
 
     </>);
 }
 
-export default UpdateProject
+export default UpdateExperience

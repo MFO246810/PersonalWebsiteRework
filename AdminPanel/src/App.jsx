@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import Project from './pages/Project&Experience'
+import Project_Exp from './pages/Project&Experience'
 import './App.css';
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
       <main className="mt-17 px-4">
         <Routes>
           <Route path="/" element={<Home/>}/>
-          <Route path="/project" element={<Project/>}/>
+          <Route path="/project" element={<Project_Exp/>}/>
         </Routes>
       </main>
         </BrowserRouter>
