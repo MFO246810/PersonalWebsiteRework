@@ -8,10 +8,11 @@ function AddProjectForm(){
         github: '',
         starttime: Date(),
         Last_updated_time: Date(),
+        PWstatus: false,
     }); 
 
     const [techStack, setTechStack] = useState(['']);
-
+    const [status,  SetStatus] = useState(false);
     const [SucessMessage, SetSucessMessage] = useState('');
 
     const sucessBar = document.getElementById("SucessMessage");
@@ -30,6 +31,19 @@ function AddProjectForm(){
         updatedStack[index] = value;
         setTechStack(updatedStack);
     };
+
+    const handleStatus = (e) =>{
+        let value = e.target;
+        if(e.target.value == "1"){
+            SetStatus(true);
+            value = "Yes"
+        } else{
+            SetStatus(false);
+            value = "No"
+        }
+        
+        
+    }
 
     const addTechInput = () => {
         setTechStack([...techStack, '']);
@@ -216,6 +230,21 @@ function AddProjectForm(){
                             type="button"
                             onClick={addTechInput}
                             className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Add Tech</button>
+                    </div>
+                    <label htmlFor="SelectProject" className="block mb-2 text-sm font-medium text-gray-700">
+                        Display on Portfolio Website:
+                    </label>
+                    <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                        <select
+                            id="SelectProject"
+                            value={formdata.status}
+                            onChange= {handleFormChange}
+                            required
+                            className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                        >
+                        <option value="1" disabled>Yes</option>
+                        <option value="0">No</option>
+                        </select> 
                     </div>
                     <div className="mt-4">
                         <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"> Submit </button>

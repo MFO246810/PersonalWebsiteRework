@@ -11,7 +11,8 @@ const ProjectSchema = new Schema({
     github: {type: String , unique: true, required: true},
     techstack: [String],
     starttime: {type: Date, required: true},
-    Last_updated_time: {type: Date} 
+    Last_updated_time: {type: Date},
+    PWstatus: {type: Boolean}
 });
 
 const projects =  model("Projects", ProjectSchema);

@@ -44,7 +44,8 @@ export const UpdateProject = async (req, res) => {
 
 export const deleteProject = async (req, res) => {
     try{
-        await projects.findOneAndDelete({title: req.params.title});
+        await projects.findOneAndDelete({title: req.params['title']});
+        console.log(`SucessFully Deleted ${req.params['title']}ww`)
         res.status(200).json({"Message": "Project Deleted Sucessfully"})
     } catch(e){
         console.log(e);

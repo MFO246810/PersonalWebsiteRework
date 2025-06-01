@@ -12,7 +12,8 @@ const ExperienceSchema = new Schema({
     company: {type: String},
     description: {type: String},
     startTime: {type: Date, required: true},
-    EndTime: {type: Date} 
+    EndTime: {type: Date},
+    PWstatus: {type: Boolean}
 });
 
 const experience =  model("experience", ExperienceSchema);
