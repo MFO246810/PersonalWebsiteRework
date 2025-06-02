@@ -8,13 +8,12 @@ function AddProjectForm(){
         github: '',
         starttime: Date(),
         Last_updated_time: Date(),
-        PWstatus: false,
     }); 
 
     const [techStack, setTechStack] = useState(['']);
-    const [status,  SetStatus] = useState(false);
+    const [status,  SetStatus] = useState("");
     const [SucessMessage, SetSucessMessage] = useState('');
-
+    const [FailureMessage, SetFailureMessage] = useState('');
     const sucessBar = document.getElementById("SucessMessage");
     const FailureBar = document.getElementById("MessageBox");
 
@@ -32,19 +31,6 @@ function AddProjectForm(){
         setTechStack(updatedStack);
     };
 
-    const handleStatus = (e) =>{
-        let value = e.target;
-        if(e.target.value == "1"){
-            SetStatus(true);
-            value = "Yes"
-        } else{
-            SetStatus(false);
-            value = "No"
-        }
-        
-        
-    }
-
     const addTechInput = () => {
         setTechStack([...techStack, '']);
     };
@@ -58,32 +44,32 @@ function AddProjectForm(){
         if(formdata.title == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a title for the Project");
+            SetFailureMessage("Please Enter a title for the Project");
             return false;
         } else if(formdata.description == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a description for the Project");
+            SetFailureMessage("Please Enter a description for the Project");
             return false;
         } else if(formdata.github == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Github Uri for the Project");
+            SetFailureMessage("Please Enter a Github Uri for the Project");
             return false;
         } else if(formdata.starttime == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Start Date for the Project");
+            SetFailureMessage("Please Enter a Start Date for the Project");
             return false;
         } else if(formdata.Last_updated_time == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Last Updated Date for the Project");
+            SetFailureMessage("Please Enter a Last Updated Date for the Project");
             return false;
         } else if(techStack.length === 0 || techStack.some(tech => tech.trim() === '')){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter at least one Technology used in the Project");
+            SetFailureMessage("Please Enter at least one Technology used in the Project");
             return false;
         } 
         return true;
@@ -100,6 +86,11 @@ function AddProjectForm(){
         FinalSub.starttime = new Date(formdata.starttime).toISOString().split("T")[0];
         FinalSub.Last_updated_time = new Date(formdata.Last_updated_time).toISOString().split("T")[0];
         FinalSub.techstack = [...techStack];
+        if(status == "Yes"){
+            FinalSub.PWstatus = true;
+        } else {
+            FinalSub.PWstatus = false;
+        }
         console.log("Final Sub: ",FinalSub)
         const res = await fetch('http://localhost:3000/project', {
             method: 'Post',
@@ -120,6 +111,7 @@ function AddProjectForm(){
         });
             setTechStack(['']);
             SetSucessMessage(`${FinalSub.title} Added Sucessfully`);
+            SetFailureMessage(`${FinalSub.title} Added Unsucessfully`)
             FailureBar.style.display = "none";
             sucessBar.style.display = "block";
         }
@@ -141,7 +133,7 @@ function AddProjectForm(){
                         </svg>
                         <span className="sr-only">Info</span>
                         <div>
-                            <span className="font-medium">Danger alert!</span> {SucessMessage}.
+                            <span className="font-medium">Danger alert!</span> {FailureMessage}.
                         </div>
                     </div>
                 </div>
@@ -231,20 +223,23 @@ function AddProjectForm(){
                             onClick={addTechInput}
                             className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Add Tech</button>
                     </div>
-                    <label htmlFor="SelectProject" className="block mb-2 text-sm font-medium text-gray-700">
-                        Display on Portfolio Website:
-                    </label>
-                    <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                        <select
-                            id="SelectProject"
-                            value={formdata.status}
-                            onChange= {handleFormChange}
-                            required
-                            className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
-                        >
-                        <option value="1" disabled>Yes</option>
-                        <option value="0">No</option>
-                        </select> 
+                    <div className="sm:col-span-6">
+                        <label htmlFor="SelectProject" className="block text-sm/6 font-medium text-gray-900">
+                            Display on Portfolio Website:
+                        </label>
+                        <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                            <select
+                                id="SelectProject"
+                                value={status}
+                                onChange= {(e) => SetStatus(e.target.value)}
+                                required
+                                className="block min-w-0 grow appearance-none py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                            >
+                            <option value="" disabled>Yes or No</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                            </select> 
+                        </div>
                     </div>
                     <div className="mt-4">
                         <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"> Submit </button>

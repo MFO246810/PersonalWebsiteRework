@@ -3,29 +3,29 @@ import "./ExperienceContainer.css"
 
 const ExperienceContainer =({Experience}) => (
     <>
-        <div className = "experience">
-            <h3> Experience.title</h3>
-            
+    <div clasName="experience">
+        <div className="border border-grey-900 p-4 rounded-md mx-auto mb-6 mt-6">
+            <div className="grid grid-cols-3 gap-4 items-center">
+                <div className="text-left font-semibold text-lg">
+                    {Experience.position}
+                </div>
+                <div className="text-center font-semibold text-lg">
+                </div>
+                <div className="text-right font-semibold text-lg">
+                    {Experience.company}
+                </div>
+            </div>
+            <div className="flex justify-between text-sm text-gray-500 mt-2">
+                <div>{Experience.location}</div>
+                <div>{Experience.startTime} – {Experience.EndTime}</div>
+            </div>
 
-            <p className='Experience__description'>{Experience.description}</p>
-                {Experience.techstack && (
-                    <ul className='Experience__stack'>
-                        {Experience.techstack.map((item) => (
-                        <li key={uniqid()} className='Experience__stack-item'>
-                            {item}
-                        </li>
-                    ))}
-                </ul>)}
-
-        {Experience.github && (
-            <a
-                href={Experience.github}
-                aria-label='source code'
-                className='link link--icon'>
-                <GitHubIcon />
-            </a>
-        )}
-
+            <div className="mt-4 text-gray-700 leading-relaxed">
+                {Experience.description}
+            </div>
         </div>
+    </div>
     </>
 )
+
+export default ExperienceContainer;

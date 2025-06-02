@@ -7,16 +7,17 @@
     "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix Portfolio_Website\"",
     "build": "npm run build --prefix frontend",
     "start": "npm run build && npm run start --prefix backend",
-    "admin": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix AdminPanel\""
+    "admin": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix AdminPanel\"",
+    "all": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix AdminPanel\" \"npm run dev --prefix Portfolio_Website\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.7",
+    "@tailwindcss/vite": "^4.1.8",
     "concurrently": "^9.1.2",
     "react-router-dom": "^7.6.0",
-    "tailwindcss": "^4.1.7"
+    "tailwindcss": "^4.1.8"
   }
 }

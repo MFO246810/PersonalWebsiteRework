@@ -21,7 +21,8 @@ export const CreateNewProject = async (req, res) => {
             github: data.github,
             techstack: data.techstack,
             starttime: data.starttime,
-            Last_updated_time: data.Last_updated_time
+            Last_updated_time: data.Last_updated_time,
+            PWstatus: data.PWstatus
         });
         await NewProject.save();
         res.status(200).json({"Message": "Project Added Sucessfully"});

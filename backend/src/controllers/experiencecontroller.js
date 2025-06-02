@@ -21,7 +21,8 @@ export const CreateNewExperience = async (req, res) => {
                 company: data.company,
                 description: data.description,
                 startTime: data.startTime,
-                EndTime: data.EndTime
+                EndTime: data.EndTime,
+                PWstatus: data.PWstatus
             });
         await NewExperience.save();
         res.status(201).json({"Message": "Experience Added Sucessfully"});

@@ -13,9 +13,10 @@ function AddExperienceForm(){
     }); 
 
     const [SucessMessage, SetSucessMessage] = useState('');
-
+    const [FailureMessage, SetFailureMessage] = useState('');
     const sucessBar = document.getElementById("SucessMessage");
     const FailureBar = document.getElementById("MessageBox");
+    const [status,  SetStatus] = useState("");
 
     const handleFormChange = (e) => {
         const { name, value } = e.target;
@@ -29,37 +30,37 @@ function AddExperienceForm(){
         if(formdata.title == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a title for this Experience");
+            SetFailureMessage("Please Enter a title for this Experience");
             return false;
         } else if(formdata.description == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a description for this Experience");
+            SetFailureMessage("Please Enter a description for this Experience");
             return false;
         }else if(formdata.position == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Position for this Experience");
+            SetFailureMessage("Please Enter a Position for this Experience");
             return false;
         } else if(formdata.location == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a location for this Experience");
+            SetFailureMessage("Please Enter a location for this Experience");
             return false;
         } else if(formdata.company == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a company for this Experience");
+            SetFailureMessage("Please Enter a company for this Experience");
             return false;
         } else if(formdata.startTime == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Start Date for this Experience");
+            SetFailureMessage("Please Enter a Start Date for this Experience");
             return false;
         } else if(formdata.EndTime == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Last Updated Date for this Experience");
+            SetFailureMessage("Please Enter a Last Updated Date for this Experience");
             return false;
         } 
         return true;
@@ -77,6 +78,11 @@ function AddExperienceForm(){
         FinalSub.company = formdata.company;
         FinalSub.startTime = new Date(formdata.startTime).toISOString().split("T")[0];
         FinalSub.EndTime = new Date(formdata.EndTime).toISOString().split("T")[0];
+        if(status == "Yes"){
+            FinalSub.PWstatus = true;
+        } else {
+            FinalSub.PWstatus = false;
+        }
         console.log("Final Sub: ",FinalSub)
         const res = await fetch('http://localhost:3000/experience', {
             method: 'Post',
@@ -86,6 +92,7 @@ function AddExperienceForm(){
 
         if(!res.ok){
             console.log("An Error has occured")
+            SetFailureMessage(`${FinalSub.title} Added Unsucessfully`)
         } else {
             console.log("Form Sent Sucessfully");
             setformdata({
@@ -98,6 +105,7 @@ function AddExperienceForm(){
             EndTime: Date(),
         });
             SetSucessMessage(`${FinalSub.title} Added Sucessfully`);
+            SetFailureMessage(`${FinalSub.title} Added Unsucessfully`)
             FailureBar.style.display = "none";
             sucessBar.style.display = "block";
         }
@@ -119,7 +127,7 @@ function AddExperienceForm(){
                         </svg>
                         <span className="sr-only">Info</span>
                         <div>
-                            <span className="font-medium">Danger alert!</span> {SucessMessage}.
+                            <span className="font-medium">Danger alert!</span> {FailureMessage}.
                         </div>
                     </div>
                 </div>
@@ -197,6 +205,26 @@ function AddExperienceForm(){
                                 <input type="date" name="EndTime" id="EndTime" value={formdata.EndTime} onChange={handleFormChange} className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"/>
                             </div>
                     </div>
+
+                    <div className="sm:col-span-6">
+                        <label htmlFor="SelectProject" className="block text-sm/6 font-medium text-gray-900">
+                            Display on Portfolio Website:
+                        </label>
+                        <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+                            <select
+                                id="SelectProject"
+                                value={status}
+                                onChange= {(e) => SetStatus(e.target.value)}
+                                required
+                                className="block min-w-0 grow appearance-none py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                            >
+                            <option value="" disabled>Yes or No</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                            </select> 
+                        </div>
+                    </div>
+
                     <div className="mt-4">
                         <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"> Submit </button>
                     </div>

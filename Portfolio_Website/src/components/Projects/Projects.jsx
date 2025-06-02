@@ -27,7 +27,7 @@ const Projects = () => {
 
       <div className='projects__grid'>
         {projects.map((project) => (
-          <ProjectContainer key={uniqid()} project={project} />
+          project.PWstatus === true ? (<ProjectContainer key={uniqid()} project={project} />) : null
         ))}
       </div>
     </section>

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Cleanfolio is a portfolio template built with React. However, if you prefer a template built with HTML, CSS, and JavaScript, you can check out [Cleanfolio Minimal](https://github.com/rjshkhr/cleanfolio-minimal).",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",

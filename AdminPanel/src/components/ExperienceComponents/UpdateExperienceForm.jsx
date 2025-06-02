@@ -15,6 +15,8 @@ function UpdateExperience(){
  
     const [selectedExperience, setSelectedExperience] = useState('');
     const [SucessMessage, SetSucessMessage] = useState('');
+    const [FailureMessage, SetFailureMessage] = useState('');
+    const [status,  SetStatus] = useState(false);
     const sucessBar = document.getElementById("SucessMessageBox");
     const FailureBar = document.getElementById("FailureMessageBox");
 
@@ -51,6 +53,11 @@ function UpdateExperience(){
                 formdata.description = Experience[i].description;
                 formdata.startTime = new Date(Experience[i].starttime);
                 formdata.EndTime = new Date(Experience[i].Last_updated_time);
+                if(Experience[i].PWstatus == true){
+                    SetStatus("Yes");
+                } else {
+                    SetStatus("No");
+                }
             }
         }
     }
@@ -59,37 +66,37 @@ function UpdateExperience(){
         if(formdata.title == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a title for this Experience");
+            SetFailureMessage("Please Enter a title for this Experience");
             return false;
         } else if(formdata.description == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a description for this Experience");
+            SetFailureMessage("Please Enter a description for this Experience");
             return false;
         }else if(formdata.position == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Position for this Experience");
+            SetFailureMessage("Please Enter a Position for this Experience");
             return false;
         } else if(formdata.location == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a location for this Experience");
+            SetFailureMessage("Please Enter a location for this Experience");
             return false;
         } else if(formdata.company == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a company for this Experience");
+            SetFailureMessage("Please Enter a company for this Experience");
             return false;
         } else if(formdata.startTime == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Start Date for this Experience");
+            SetFailureMessage("Please Enter a Start Date for this Experience");
             return false;
         } else if(formdata.EndTime == ""){
             FailureBar.style.display = "block";
             sucessBar.style.display = "none";
-            SetSucessMessage("Please Enter a Last Updated Date for this Experience");
+            SetFailureMessage("Please Enter a Last Updated Date for this Experience");
             return false;
         } 
         return true;
@@ -110,8 +117,12 @@ function UpdateExperience(){
         FinalSub.github = formdata.github;
         FinalSub.startTime = new Date(formdata.starttime);
         FinalSub.EndTime = new Date(formdata.Last_updated_time);
+        if(status == "Yes"){
+            FinalSub.PWstatus = true;
+        } else {
+            FinalSub.PWstatus = false;
+        }
         console.log("Final Sub: ",FinalSub);
-
         const res = await fetch(`http://localhost:3000/Experience/update/${selectedExperience}`, {
             method: 'Post',
             headers: { 'Content-Type': 'application/json' },
@@ -133,6 +144,7 @@ function UpdateExperience(){
             EndTime: Date(),
         });
             SetSucessMessage(`${FinalSub.title} updated sucessfully`);
+            SetFailureMessage(`${FinalSub.title} updated unsucessfully`)
             setSelectedExperience('');
             fetchExperience();
             return true;
@@ -186,7 +198,7 @@ function UpdateExperience(){
                         </svg>
                         <span className="sr-only">Info</span>
                         <div>
-                            <span className="font-medium">Danger alert!</span> {SucessMessage}.
+                            <span className="font-medium">Danger alert!</span> {FailureMessage}.
                         </div>
                     </div>
                 </div>
