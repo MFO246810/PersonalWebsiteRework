@@ -1,9 +1,9 @@
 import uniqid from 'uniqid'
-import { projects } from '../../portfolio'
 import ProjectContainer from '../ProjectContainer/ProjectContainer'
 import './Projects.css'
 import { useEffect, useState } from 'react'
-
+ 
+var ShownProjects = [];
 const Projects = () => {
   const [projects, setProjects] = useState([]);
 
@@ -12,13 +12,23 @@ const Projects = () => {
   }, []);
 
   const fetchprojects = async() => {
-    await fetch('http://localhost:3000/project')
-      .then(res => res.json())
-      .then(data => setProjects(data))
+    const res = await fetch('http://localhost:3000/project')
       .catch(err => console.error("Error fetching projects:", err));
+    
+    const ProjectList = await res.json();
+    console.log(ProjectList);
+    const Proj = [];
+    for (let i = 0; i < ProjectList.length; i++){
+      if(ProjectList[i].PWstatus == true){
+        Proj.push(ProjectList[i]);
+      }
+    }
+    setProjects(Proj);
+    ShownProjects = projects;
   }
 
-  useEffect 
+
+  useEffect
   if (!projects.length) return null
 
   return (
@@ -27,11 +37,12 @@ const Projects = () => {
 
       <div className='projects__grid'>
         {projects.map((project) => (
-          project.PWstatus === true ? (<ProjectContainer key={uniqid()} project={project} />) : null
+          <ProjectContainer key={uniqid()} project={project} />
         ))}
       </div>
     </section>
   )
 }
 
-export default Projects
+export {ShownProjects}; 
+export default Projects;

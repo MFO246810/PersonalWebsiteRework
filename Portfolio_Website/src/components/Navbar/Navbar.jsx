@@ -4,7 +4,9 @@ import WbSunnyRoundedIcon from '@mui/icons-material/WbSunnyRounded'
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import { ThemeContext } from '../../contexts/theme'
-import { projects, skills, contact } from '../../portfolio'
+import {skills, contact } from '../../portfolio'
+import { ShownExperiences } from '../Experience/experience'
+import { ShownProjects } from '../Projects/Projects'
 import './Navbar.css'
 
 const Navbar = () => {
@@ -12,14 +14,14 @@ const Navbar = () => {
   const [showNavList, setShowNavList] = useState(false)
 
   const toggleNavList = () => setShowNavList(!showNavList)
-
+  console.log(ShownExperiences, ShownProjects)
   return (
     <nav className='center nav'>
       <ul
         style={{ display: showNavList ? 'flex' : null }}
         className='nav__list'
       >
-        {projects.length ? (
+        {ShownProjects.length ? (
           <li className='nav__list-item'>
             <a
               href='#projects'
@@ -27,6 +29,18 @@ const Navbar = () => {
               className='link link--nav'
             >
               Projects
+            </a>
+          </li>
+        ) : null}
+
+        {ShownExperiences.length ? (
+          <li className='nav__list-item'>
+            <a
+              href='#experience'
+              onClick={toggleNavList}
+              className='link link--nav'
+            >
+              Experience
             </a>
           </li>
         ) : null}
